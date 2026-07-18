@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { useProductsStore } from '@/stores/products'
+import { ProductState } from '@/types/product'
 
 const store = useProductsStore()
+
+const stateOptions = [
+  { value: ProductState.ACTIVE, label: 'Activo' },
+  { value: ProductState.INACTIVE, label: 'Inactivo' },
+  { value: ProductState.NO_STOCK, label: 'Sin stock' },
+  { value: ProductState.DISCONTINUED, label: 'Descontinuado' },
+]
 </script>
 
 <template>
@@ -36,8 +44,9 @@ const store = useProductsStore()
           <div class="field">
             <label for="state">Estado</label>
             <select id="state" v-model="store.form.state" class="select">
-              <option value="active">Activo</option>
-              <option value="discontinued">Descontinuado</option>
+              <option v-for="opt in stateOptions" :key="opt.value" :value="opt.value">
+                {{ opt.label }}
+              </option>
             </select>
           </div>
 

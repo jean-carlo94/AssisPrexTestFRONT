@@ -1,10 +1,17 @@
+export enum ProductState {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  NO_STOCK = 'NO_STOCK',
+  DISCONTINUED = 'DISCONTINUED',
+}
+
 export interface Product {
   id: number
   name: string
   description: string | null
   price: number
   stock: number
-  state: string
+  state: ProductState
   create_at: string
 }
 
@@ -13,7 +20,7 @@ export interface ProductForm {
   description: string
   price: number
   stock: number
-  state: string
+  state: ProductState
 }
 
 export function createEmptyProduct(): ProductForm {
@@ -22,6 +29,6 @@ export function createEmptyProduct(): ProductForm {
     description: '',
     price: 0,
     stock: 0,
-    state: 'active',
+    state: ProductState.ACTIVE,
   }
 }
