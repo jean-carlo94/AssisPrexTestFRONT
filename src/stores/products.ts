@@ -13,20 +13,33 @@ export const useProductsStore = defineStore('products', () => {
   const error = ref<string | null>(null)
   const saving = ref(false)
 
+  const page = ref(1)
+  const size = ref(10)
+  const total = ref(0)
+  const pages = ref(0)
+
   const isEditing = computed(() => editingId.value !== null)
-  const productCount = computed(() => products.value.length)
+  const productCount = computed(() => total.value)
 
   async function fetchProducts() {
     loading.value = true
     error.value = null
 
     try {
-      products.value = await productsService.getAll()
+      const res = await productsService.getAll(page.value, size.value)
+      products.value = res.items
+      total.value = res.total
+      pages.value = res.pages
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error al cargar productos'
     } finally {
       loading.value = false
     }
+  }
+
+  function goToPage(p: number) {
+    page.value = p
+    fetchProducts()
   }
 
   function openCreateForm() {
@@ -65,11 +78,11 @@ export const useProductsStore = defineStore('products', () => {
           products.value[index] = updated
         }
       } else {
-        const created = await productsService.create(form.value)
-        products.value.push(created)
+        await productsService.create(form.value)
       }
 
       closeForm()
+      fetchProducts()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error al guardar producto'
     } finally {
@@ -83,8 +96,12 @@ export const useProductsStore = defineStore('products', () => {
 
     try {
       await productsService.remove(id)
-      products.value = products.value.filter((p) => p.id !== id)
       if (editingId.value === id) closeForm()
+
+      if (products.value.length === 1 && page.value > 1) {
+        page.value--
+      }
+      fetchProducts()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Error al eliminar producto'
     } finally {
@@ -100,9 +117,14 @@ export const useProductsStore = defineStore('products', () => {
     loading,
     error,
     saving,
+    page,
+    size,
+    total,
+    pages,
     isEditing,
     productCount,
     fetchProducts,
+    goToPage,
     openCreateForm,
     openEditForm,
     closeForm,

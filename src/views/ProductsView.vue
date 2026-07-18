@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useProductsStore } from '@/stores/products'
 import ProductForm from '@/components/products/ProductForm.vue'
 import ProductsTable from '@/components/products/ProductsTable.vue'
+import Pagination from '@/components/ui/Pagination.vue'
 
 const store = useProductsStore()
 
@@ -38,6 +39,13 @@ onMounted(() => {
     </div>
 
     <ProductsTable />
+
+    <Pagination
+      :page="store.page"
+      :pages="store.pages"
+      :total="store.total"
+      @change="store.goToPage"
+    />
   </div>
 </template>
 

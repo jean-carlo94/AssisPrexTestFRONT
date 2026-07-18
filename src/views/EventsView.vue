@@ -2,6 +2,7 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEventsStore } from '@/stores/events'
+import Pagination from '@/components/ui/Pagination.vue'
 
 const store = useEventsStore()
 const route = useRoute()
@@ -35,10 +36,9 @@ const prettyJson = (raw: string): string => {
 onMounted(() => {
   const productId = route.query.product_id
   if (productId) {
-    store.fetchByProduct(Number(productId))
-  } else {
-    store.fetchAll()
+    store.setProductFilter(Number(productId))
   }
+  store.fetchEvents()
 })
 </script>
 
@@ -54,7 +54,7 @@ onMounted(() => {
 
     <div v-else-if="store.error" class="error-banner">
       <p>{{ store.error }}</p>
-      <button class="btn btn-sm" @click="store.fetchAll()">Reintentar</button>
+      <button class="btn btn-sm" @click="store.fetchEvents()">Reintentar</button>
     </div>
 
     <div v-else-if="store.events.length === 0" class="empty-state">
@@ -66,7 +66,7 @@ onMounted(() => {
         <tr>
           <th>#</th>
           <th>Producto</th>
-          <th>Acción</th>
+          <th>Acci&oacute;n</th>
           <th>Datos</th>
           <th>Fecha</th>
         </tr>
@@ -85,6 +85,13 @@ onMounted(() => {
         </tr>
       </tbody>
     </table>
+
+    <Pagination
+      :page="store.page"
+      :pages="store.pages"
+      :total="store.total"
+      @change="store.goToPage"
+    />
   </div>
 </template>
 

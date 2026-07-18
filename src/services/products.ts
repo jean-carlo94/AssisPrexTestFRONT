@@ -1,9 +1,10 @@
 import api from './api'
 import type { Product, ProductForm } from '@/types/product'
+import type { PaginatedResponse } from '@/types/pagination'
 
 export const productsService = {
-  async getAll(): Promise<Product[]> {
-    return api.get('/products') as Promise<Product[]>
+  async getAll(page = 1, size = 10): Promise<PaginatedResponse<Product>> {
+    return api.get('/products', { params: { page, size } }) as Promise<PaginatedResponse<Product>>
   },
 
   async getById(id: number): Promise<Product> {
