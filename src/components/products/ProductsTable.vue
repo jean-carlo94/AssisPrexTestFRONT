@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useProductsStore } from '@/stores/products'
 import ProductBadge from './ProductBadge.vue'
 
 const store = useProductsStore()
+const router = useRouter()
+
+function viewEvents(productId: number) {
+  router.push({ name: 'events', query: { product_id: String(productId) } })
+}
 </script>
 
 <template>
@@ -29,9 +35,12 @@ const store = useProductsStore()
         <td>
           <ProductBadge :state="product.state" />
         </td>
-        <td class="actions">
-          <button class="btn btn-sm btn-edit" @click="store.openEditForm(product)">Editar</button>
-          <button class="btn btn-sm btn-danger" @click="store.deleteProduct(product.id)">Eliminar</button>
+        <td>
+          <div class="actions">
+            <button class="btn btn-sm btn-log" @click="viewEvents(product.id)">Log</button>
+            <button class="btn btn-sm btn-edit" @click="store.openEditForm(product)">Editar</button>
+            <button class="btn btn-sm btn-danger" @click="store.deleteProduct(product.id)">Eliminar</button>
+          </div>
         </td>
       </tr>
     </tbody>
@@ -48,7 +57,7 @@ const store = useProductsStore()
 .products-table td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--border);
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .products-table th {
@@ -78,6 +87,7 @@ const store = useProductsStore()
 
 .actions {
   display: flex;
+  flex-direction: row;
   gap: 8px;
 }
 
@@ -104,6 +114,17 @@ const store = useProductsStore()
 
 .btn-edit:hover {
   color: var(--accent);
+}
+
+.btn-log {
+  color: #3b82f6;
+  border-color: #3b82f6;
+  background: transparent;
+}
+
+.btn-log:hover {
+  background: #3b82f6;
+  color: #fff;
 }
 
 .btn-danger {

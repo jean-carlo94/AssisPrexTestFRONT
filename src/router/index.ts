@@ -8,6 +8,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/ProductsView.vue'),
   },
   {
+    path: '/events',
+    name: 'events',
+    component: () => import('@/views/EventsView.vue'),
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/products',
   },
