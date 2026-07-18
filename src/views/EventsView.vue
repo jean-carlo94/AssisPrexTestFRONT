@@ -2,36 +2,11 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useEventsStore } from '@/stores/events'
+import EventsTable from '@/components/events/EventsTable.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 
 const store = useEventsStore()
 const route = useRoute()
-
-const actionLabel = (action: string): string => {
-  const labels: Record<string, string> = {
-    CREATE: 'Creado',
-    UPDATE: 'Actualizado',
-    DELETE: 'Eliminado',
-    STATUS_CHANGED: 'Estado cambiado',
-  }
-  return labels[action] || action
-}
-
-const actionClass = (action: string): string => {
-  return `badge-action-${action.toLowerCase()}`
-}
-
-const formatDate = (date: string): string => {
-  return new Date(date).toLocaleString('es-PE')
-}
-
-const prettyJson = (raw: string): string => {
-  try {
-    return JSON.stringify(JSON.parse(raw), null, 2)
-  } catch {
-    return raw
-  }
-}
 
 onMounted(() => {
   const productId = route.query.product_id
@@ -61,30 +36,7 @@ onMounted(() => {
       <p>No hay eventos registrados.</p>
     </div>
 
-    <table v-else class="events-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Producto</th>
-          <th>Acci&oacute;n</th>
-          <th>Datos</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="event in store.events" :key="event.id">
-          <td>{{ event.id }}</td>
-          <td>#{{ event.product_id }}</td>
-          <td>
-            <span :class="['badge', actionClass(event.action)]">{{ actionLabel(event.action) }}</span>
-          </td>
-          <td class="details-cell">
-            <pre>{{ prettyJson(event.description) }}</pre>
-          </td>
-          <td>{{ formatDate(event.create_at) }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <EventsTable />
 
     <Pagination
       :page="store.page"
@@ -138,76 +90,6 @@ onMounted(() => {
 .error-banner p {
   color: #ef4444;
   margin: 0;
-}
-
-.events-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.events-table th,
-.events-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-
-.events-table th {
-  text-align: left;
-  font-weight: 500;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.events-table td {
-  font-size: 14px;
-}
-
-.details-cell pre {
-  margin: 0;
-  padding: 8px 12px;
-  background: var(--code-bg);
-  border-radius: 6px;
-  font-family: ui-monospace, Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text-h);
-  white-space: pre-wrap;
-  word-break: break-word;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.badge {
-  display: inline-flex;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.badge-action-create {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-}
-
-.badge-action-update {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-}
-
-.badge-action-delete {
-  background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-}
-
-.badge-action-status_changed {
-  background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
 }
 
 .btn {
